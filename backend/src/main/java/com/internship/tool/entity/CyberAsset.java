@@ -1,6 +1,10 @@
 package com.internship.tool.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,9 +28,13 @@ public class CyberAsset {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Asset name is required")
+    @Size(max = 255, message = "Asset name cannot exceed 255 characters")
     @Column(name = "asset_name", nullable = false, length = 255)
     private String assetName;
 
+    @NotBlank(message = "Asset type is required")
+    @Size(max = 100, message = "Asset type cannot exceed 100 characters")
     @Column(name = "asset_type", nullable = false, length = 100)
     private String assetType;          // e.g. SERVER, WORKSTATION, ROUTER, IOT_DEVICE
 
@@ -51,9 +59,13 @@ public class CyberAsset {
     @Column(name = "department", length = 255)
     private String department;
 
+    @NotBlank(message = "Status is required")
+    @Size(max = 50, message = "Status cannot exceed 50 characters")
     @Column(name = "status", nullable = false, length = 50)
     private String status;             // ACTIVE, INACTIVE, UNKNOWN, DECOMMISSIONED
 
+    @Min(value = 0, message = "Risk score must be at least 0")
+    @Max(value = 100, message = "Risk score cannot exceed 100")
     @Column(name = "risk_score")
     private Integer riskScore;         // 0–100
 
