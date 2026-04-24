@@ -2,43 +2,38 @@ package com.internship.tool.controller;
 
 import com.internship.tool.model.Asset;
 import com.internship.tool.service.AssetService;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/assets")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AssetController {
 
-    private final AssetService assetService;
+    @Autowired
+    private AssetService assetService;
 
-    public AssetController(AssetService assetService) {
-        this.assetService = assetService;
+    @GetMapping("/all")
+    public Page<Asset> getAllAssets(Pageable pageable) {
+        return assetService.getAllAssets(pageable);
     }
 
-    // GET all assets
+    // (Optional) Existing APIs
     @GetMapping
-    public List<Asset> getAllAssets() {
-        return assetService.getAllAssets();
+    public Iterable<Asset> getAssets() {
+        return assetService.getAssets();
     }
 
-    // POST create asset
     @PostMapping
-    public Asset createAsset(@RequestBody Asset asset) {
-        return assetService.saveAsset(asset);
+    public Asset addAsset(@RequestBody Asset asset) {
+        return assetService.addAsset(asset);
     }
 
-    // PUT update asset
-    @PutMapping("/{id}")
-    public Asset updateAsset(@PathVariable Long id, @RequestBody Asset asset) {
-        return assetService.updateAsset(id, asset);
-    }
-
-    // DELETE asset
     @DeleteMapping("/{id}")
-    public String deleteAsset(@PathVariable Long id) {
+    public void deleteAsset(@PathVariable Long id) {
         assetService.deleteAsset(id);
-        return "Asset deleted successfully";
     }
 }

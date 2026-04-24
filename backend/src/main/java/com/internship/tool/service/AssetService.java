@@ -2,41 +2,32 @@ package com.internship.tool.service;
 
 import com.internship.tool.model.Asset;
 import com.internship.tool.repository.AssetRepository;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class AssetService {
 
-    private final AssetRepository repo;
+    @Autowired
+    private AssetRepository assetRepository;
 
-    public AssetService(AssetRepository repo) {
-        this.repo = repo;
+    public Page<Asset> getAllAssets(Pageable pageable) {
+        return assetRepository.findAll(pageable);
     }
 
-    public List<Asset> getAllAssets() {
-        return repo.findAll();
+    // Existing methods
+    public Iterable<Asset> getAssets() {
+        return assetRepository.findAll();
     }
 
-    public Asset saveAsset(Asset asset) {
-        return repo.save(asset);
+    public Asset addAsset(Asset asset) {
+        return assetRepository.save(asset);
     }
 
-   
-    public Asset updateAsset(Long id, Asset updatedAsset) {
-        Asset asset = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Asset not found"));
-
-        asset.setName(updatedAsset.getName());
-        asset.setType(updatedAsset.getType());
-        asset.setIpAddress(updatedAsset.getIpAddress());
-
-        return repo.save(asset);
-    }
-
-   
     public void deleteAsset(Long id) {
-        repo.deleteById(id);
+        assetRepository.deleteById(id);
     }
 }
