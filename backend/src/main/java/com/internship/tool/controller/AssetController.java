@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/assets")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -21,7 +24,23 @@ public class AssetController {
         return assetService.getAllAssets(pageable);
     }
 
-    // (Optional) Existing APIs
+    @GetMapping("/stats")
+    public Map<String, Long> getStats() {
+        Map<String, Long> stats = new HashMap<>();
+
+        stats.put("totalAssets", assetService.countAllAssets());
+        stats.put("activeAssets", assetService.countByStatus("ACTIVE"));
+        stats.put("inactiveAssets", assetService.countByStatus("INACTIVE"));
+        stats.put("highRiskAssets", assetService.countHighRiskAssets());
+
+        return stats;
+    }
+
+    @GetMapping("/{id}")
+    public Asset getAssetById(@PathVariable Long id) {
+        return assetService.getAssetById(id);
+    }
+
     @GetMapping
     public Iterable<Asset> getAssets() {
         return assetService.getAssets();
@@ -30,6 +49,11 @@ public class AssetController {
     @PostMapping
     public Asset addAsset(@RequestBody Asset asset) {
         return assetService.addAsset(asset);
+    }
+
+    @PutMapping("/{id}")
+    public Asset updateAsset(@PathVariable Long id, @RequestBody Asset asset) {
+        return assetService.updateAsset(id, asset);
     }
 
     @DeleteMapping("/{id}")

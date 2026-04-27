@@ -4,9 +4,9 @@ import com.internship.tool.model.Asset;
 import com.internship.tool.repository.AssetRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AssetService {
@@ -18,7 +18,6 @@ public class AssetService {
         return assetRepository.findAll(pageable);
     }
 
-    // Existing methods
     public Iterable<Asset> getAssets() {
         return assetRepository.findAll();
     }
@@ -29,5 +28,34 @@ public class AssetService {
 
     public void deleteAsset(Long id) {
         assetRepository.deleteById(id);
+    }
+
+    public long countAllAssets() {
+        return assetRepository.count();
+    }
+
+    public long countByStatus(String status) {
+        return assetRepository.countByStatusIgnoreCase(status);
+    }
+
+    public long countHighRiskAssets() {
+        return assetRepository.countByRiskScoreGreaterThanEqual(70);
+    }
+
+    public Asset getAssetById(Long id) {
+        return assetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Asset not found with id: " + id));
+    }
+
+    public Asset updateAsset(Long id, Asset updatedAsset) {
+        Asset existingAsset = getAssetById(id);
+
+        existingAsset.setName(updatedAsset.getName());
+        existingAsset.setIpAddress(updatedAsset.getIpAddress());
+        existingAsset.setType(updatedAsset.getType());
+        existingAsset.setStatus(updatedAsset.getStatus());
+        existingAsset.setRiskScore(updatedAsset.getRiskScore());
+
+        return assetRepository.save(existingAsset);
     }
 }
