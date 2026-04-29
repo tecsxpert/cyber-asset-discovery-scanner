@@ -1,48 +1,77 @@
 version: '3.8'
 
 services:
-
   postgres:
     image: postgres:15
-    container_name: postgres_db
+    container_name: tool95-postgres
     environment:
-      POSTGRES_DB: cyberdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: ${DB_NAME:-tool95}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7
-    container_name: redis_cache
+    container_name: tool95-redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build: ./backend
-    container_name: spring_boot_app
+    container_name: tool95-backend
     ports:
       - "8080:8080"
-    depends_on:
-      - postgres
-      - redis
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cyberdb
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: password
-      SPRING_REDIS_HOST: redis
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-tool95}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-mySecretKey}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      AI_SERVICE_URL: http://ai-service:5000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   ai-service:
     build: ./ai-service
-    container_name: flask_ai
+    container_name: tool95-ai
     ports:
       - "5000:5000"
+    environment:
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build: ./frontend
-    container_name: react_app
+    container_name: tool95-frontend
     ports:
       - "80:80"
     depends_on:
