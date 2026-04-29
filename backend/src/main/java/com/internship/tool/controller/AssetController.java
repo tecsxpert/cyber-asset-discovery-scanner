@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.PageRequest;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,9 +62,11 @@ public class AssetController {
 
     
     @GetMapping("/{id}")
-    public Asset getAssetById(@PathVariable Long id) {
-        return assetService.getAssetById(id);
-    }
+    public ResponseEntity<Asset> getAssetById(@PathVariable Long id) {
+        return assetService.getAssetByIdOptional(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+}
 
   
     @GetMapping

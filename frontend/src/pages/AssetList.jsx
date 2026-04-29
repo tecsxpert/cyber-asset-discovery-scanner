@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import { Link } from "react-router-dom";
+import AiPanel from "../components/AiPanel";
 
 function AssetList() {
   const [assets, setAssets] = useState([]);
@@ -268,7 +269,7 @@ function AssetList() {
                     </span>
                   </p>
                 </div>
-
+                <AiPanel asset={asset} />
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Link
                     to={`/assets/${asset.id}`}
