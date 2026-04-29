@@ -7,6 +7,7 @@ import com.internship.tool.exception.ResourceNotFoundException;
 import com.internship.tool.repository.CyberAssetRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,8 +28,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * 10 JUnit 5 unit tests for CyberAssetServiceImpl using Mockito.
+ * 11 JUnit 5 unit tests for CyberAssetServiceImpl using Mockito.
+ * Run with: mvn test -Dgroups=unit
  */
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 class CyberAssetServiceImplTest {
 
@@ -221,5 +224,20 @@ class CyberAssetServiceImplTest {
         assertEquals(7L, stats.get("INACTIVE"));
         assertEquals(3L, stats.get("UNKNOWN"));
         assertEquals(4, stats.size()); // total + 3 statuses
+    }
+
+    // ─── Test 11: Create Asset Null Type ───────────────────────────────────────
+
+    @Test
+    @DisplayName("11. createAsset — throws AssetValidationException when assetType is null")
+    void createAsset_nullType_throwsValidation() {
+        CyberAsset invalidAsset = new CyberAsset("Valid Name", null, "ACTIVE");
+
+        assertThrows(
+                AssetValidationException.class,
+                () -> assetService.createAsset(invalidAsset)
+        );
+
+        verify(assetRepository, never()).save(any());
     }
 }
