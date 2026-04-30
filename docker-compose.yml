@@ -6,6 +6,11 @@ services:
       POSTGRES_DB: cyberdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234 
+    container_name: tool95-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-tool95}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
     ports:
       - "5432:5432"
     volumes:
