@@ -15,6 +15,8 @@ function AssetList() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
+  const [uploadFile, setUploadFile] = useState(null);
+  const [uploadMessage, setUploadMessage] = useState("");
 
   const size = 2;
 
@@ -106,6 +108,48 @@ function AssetList() {
     if (score >= 40) return "bg-yellow-100 text-yellow-700";
     return "bg-green-100 text-green-700";
   };
+  
+  const handleExportCsv = async () => {
+  try {
+    const response = await API.get("/assets/export", {
+      responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.setAttribute("download", "assets.csv");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    alert("CSV export failed");
+  }
+};
+
+  const handleUploadCsv = async () => {
+  if (!uploadFile) {
+    alert("Please select a CSV file");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", uploadFile);
+
+  try {
+    const response = await API.post("/assets/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    setUploadMessage(response.data);
+    fetchAssets();
+  } catch (error) {
+    setUploadMessage(error.response?.data || "Upload failed");
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -135,8 +179,42 @@ function AssetList() {
           </div>
         </div>
       </div>
+      <div className="bg-white shadow-md rounded-xl p-4 mb-6 border">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+       Day 9 CSV Tools
+       </h2>
 
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+      <button
+      onClick={handleExportCsv}
+      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow"
+    >
+      Export CSV
+       </button>
+
+      <input
+      type="file"
+      accept=".csv"
+      onChange={(e) => setUploadFile(e.target.files[0])}
+      className="border rounded-lg px-3 py-2"
+      />
+
+      <button
+      onClick={handleUploadCsv}
+      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
+      >
+      Upload CSV
+      </button>
+    </div>
+
+   {uploadMessage && (
+    <p className="mt-3 text-sm text-gray-700 bg-gray-100 p-2 rounded">
+      {uploadMessage}
+    </p>
+  )}
+</div>
       <div className="max-w-6xl mx-auto p-6">
+      <div className="bg-white shadow-md rounded-xl p-4 mb-6 border"></div>
         <div className="bg-white rounded-2xl shadow p-5 mb-6 border border-slate-200">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
             <div>
