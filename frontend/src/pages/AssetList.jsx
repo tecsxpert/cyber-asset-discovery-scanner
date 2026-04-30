@@ -362,6 +362,12 @@ function AssetList() {
                   >
                     Edit
                   </Link>
+                  <Link
+                     to="/analytics"
+                    className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+>
+                    Analytics
+                  </Link>
 
                   <button
                     onClick={() => deleteAsset(asset.id)}

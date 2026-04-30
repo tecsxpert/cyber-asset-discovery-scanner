@@ -1,3 +1,4 @@
+import ProtectedRoute from "./components/ProtectedRoute";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AssetList from "./pages/AssetList";
 import AddAsset from "./pages/AddAsset";
@@ -6,6 +7,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AssetDetail from "./pages/AssetDetail";
 import { AuthProvider } from "./context/AuthContext";
+import Analytics from "./pages/Analytics";
+
 
 function App() {
   return (
@@ -18,6 +21,7 @@ function App() {
           <Route path="/assets/:id" element={<AssetDetail />} />
           <Route path="/add" element={<AddAsset />} />
           <Route path="/edit/:id" element={<EditAsset />} />
+          <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute> }/>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
