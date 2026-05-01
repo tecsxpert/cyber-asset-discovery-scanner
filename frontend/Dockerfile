@@ -8,6 +8,7 @@ RUN npm run build
 
 # ─── Stage 2: Serve with Nginx ────────────────────────────────────────────────
 FROM nginx:alpine
+RUN apk add --no-cache curl
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Custom nginx config for React SPA routing
