@@ -15,6 +15,7 @@ public class AssetService {
     @Autowired
     private AssetRepository assetRepository;
 
+    // Day 11: uses pageable sorting from controller
     public Page<Asset> getAllAssets(Pageable pageable) {
         return assetRepository.findAll(pageable);
     }
@@ -65,6 +66,7 @@ public class AssetService {
         return assetRepository.countByRiskScoreGreaterThanEqual(70);
     }
 
+  
     public Page<Asset> searchAssets(
             String q,
             String status,
