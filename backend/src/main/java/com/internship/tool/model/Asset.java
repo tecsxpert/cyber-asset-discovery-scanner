@@ -1,6 +1,7 @@
 package com.internship.tool.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class Asset {
@@ -15,6 +16,8 @@ public class Asset {
     private String status;
     private Integer riskScore;
 
+    private LocalDateTime createdAt;
+
     public Asset() {}
 
     public Asset(String name, String type, String ipAddress, String status, Integer riskScore) {
@@ -23,6 +26,11 @@ public class Asset {
         this.ipAddress = ipAddress;
         this.status = status;
         this.riskScore = riskScore;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -67,5 +75,14 @@ public class Asset {
 
     public void setRiskScore(Integer riskScore) {
         this.riskScore = riskScore;
+    }
+
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,18 +21,25 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/assets")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost"})
 public class AssetController {
 
     @Autowired
     private AssetService assetService;
 
+   
     @Operation(summary = "Get all assets with pagination")
     @GetMapping("/all")
-    public Page<Asset> getAllAssets(Pageable pageable) {
-        return assetService.getAllAssets(pageable);
+    public Page<Asset> getAllAssets(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return assetService.getAllAssets(
+                PageRequest.of(page, size, Sort.by("createdAt").descending())
+        );
     }
 
+   
     @Operation(summary = "Search assets using keyword, status and date range")
     @GetMapping("/search")
     public Page<Asset> searchAssets(
@@ -47,7 +55,7 @@ public class AssetController {
                 status,
                 startDate,
                 endDate,
-                PageRequest.of(page, size)
+                PageRequest.of(page, size, Sort.by("createdAt").descending())
         );
     }
 
