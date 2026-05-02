@@ -21,7 +21,7 @@ function Analytics() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const response = await API.get(`/analytics?period=${period}`);
+      const response = await API.get(`/assets/stats`);
       setAnalytics(response.data);
     } catch (error) {
       console.error("Analytics fetch error:", error);
@@ -58,9 +58,28 @@ function Analytics() {
     );
   }
 
-  const statusData = mapToChartData(analytics.statusCount);
-  const typeData = mapToChartData(analytics.typeCount);
-  const riskData = mapToChartData(analytics.riskCount);
+const statusData = [
+  { name: "Active", value: analytics.activeAssets || 0 },
+  { name: "Inactive", value: analytics.inactiveAssets || 0 },
+  {
+    name: "Other",
+    value:
+      (analytics.totalAssets || 0) -
+      ((analytics.activeAssets || 0) + (analytics.inactiveAssets || 0)),
+  },
+];
+
+const riskData = [
+  { name: "High Risk", value: analytics.highRiskAssets || 0 },
+  {
+    name: "Normal Risk",
+    value: (analytics.totalAssets || 0) - (analytics.highRiskAssets || 0),
+  },
+];
+
+const typeData = [
+  { name: "Total Assets", value: analytics.totalAssets || 0 },
+];
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

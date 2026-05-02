@@ -21,14 +21,11 @@ const Login = () => {
         return;
       }
 
-      loginUser(token);
+      loginUser(token);   
       navigate("/");
     } catch (err) {
       console.error("Login error:", err);
-
-      
-      loginUser("mock-token-day-6");
-      navigate("/");
+      alert("Invalid username or password");   
     }
   };
 
@@ -70,7 +67,7 @@ const Login = () => {
         </button>
 
         <p className="text-xs text-center text-gray-400 mt-4">
-          Mock token enabled until backend JWT is ready
+          Backend JWT enabled
         </p>
       </form>
     </div>
