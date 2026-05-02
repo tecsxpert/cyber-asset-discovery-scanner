@@ -1,7 +1,9 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
+
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN apk add --no-cache maven && mvn package -DskipTests
+
+COPY target/backend-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
-CMD ["java", "-jar", "target/tool-0.0.1-SNAPSHOT.jar"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

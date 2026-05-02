@@ -3,11 +3,11 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: tool95-postgres
+    container_name: cyber-postgres
     environment:
-      POSTGRES_DB: ${DB_NAME:-tool95}
-      POSTGRES_USER: ${DB_USERNAME:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: cyberdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
     ports:
       - "5432:5432"
     volumes:
@@ -31,9 +31,16 @@ services:
 
   backend:
     build: ./backend
+<<<<<<< HEAD
     container_name: tool95-backend
     ports:
       - "8080:8080"
+=======
+    container_name: cyber-backend
+    depends_on:
+      - postgres
+      - redis
+>>>>>>> 3c2472e (Day 12: Code review completed, secrets removed, standards enforced, final merge and release v1.0)
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -42,6 +49,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+<<<<<<< HEAD
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
       JWT_SECRET: ${JWT_SECRET:-mySecretKey}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
@@ -68,6 +76,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+=======
+      JWT_SECRET:  mySuperSecretKey123456789012345678901234567890
+    ports:
+      - "8080:8080"
+>>>>>>> 3c2472e (Day 12: Code review completed, secrets removed, standards enforced, final merge and release v1.0)
 
   frontend:
     build: ./frontend
