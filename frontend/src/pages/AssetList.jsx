@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import { Link } from "react-router-dom";
+import AiPanel from "../components/AiPanel";
 
 function AssetList() {
   const [assets, setAssets] = useState([]);
@@ -14,6 +15,8 @@ function AssetList() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
+  const [uploadFile, setUploadFile] = useState(null);
+  const [uploadMessage, setUploadMessage] = useState("");
 
   const size = 2;
 
@@ -106,28 +109,70 @@ function AssetList() {
     return "bg-green-100 text-green-700";
   };
 
+  const handleExportCsv = async () => {
+    try {
+      const response = await API.get("/assets/export", {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.setAttribute("download", "assets.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      alert("CSV export failed");
+    }
+  };
+
+  const handleUploadCsv = async () => {
+    if (!uploadFile) {
+      alert("Please select a CSV file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", uploadFile);
+
+    try {
+      const response = await API.post("/assets/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setUploadMessage(response.data);
+      fetchAssets();
+    } catch (error) {
+      setUploadMessage(error.response?.data || "Upload failed");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-100">
-      <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-700 text-white px-6 py-8 shadow">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between md:items-center gap-4">
+      <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-700 px-4 py-6 text-white shadow sm:px-6 sm:py-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Asset List</h1>
-            <p className="text-blue-100 mt-1">
+            <h1 className="text-2xl font-bold sm:text-3xl">Asset List</h1>
+            <p className="mt-1 text-sm text-blue-100 sm:text-base">
               Search, filter and manage discovered cyber assets
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               to="/dashboard"
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 shadow"
+              className="rounded-lg bg-purple-600 px-4 py-3 text-center text-white shadow hover:bg-purple-700"
             >
               Dashboard
             </Link>
 
             <Link
               to="/add"
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 shadow"
+              className="rounded-lg bg-green-600 px-4 py-3 text-center text-white shadow hover:bg-green-700"
             >
               + Add Asset
             </Link>
@@ -135,9 +180,44 @@ function AssetList() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="bg-white rounded-2xl shadow p-5 mb-6 border border-slate-200">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+      <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
+        <div className="mb-6 rounded-xl border bg-white p-4 shadow-md">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">
+            Day 9 CSV Tools
+          </h2>
+
+          <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            <button
+              onClick={handleExportCsv}
+              className="w-full rounded-lg bg-green-600 px-4 py-3 text-white shadow hover:bg-green-700 md:w-auto"
+            >
+              Export CSV
+            </button>
+
+            <input
+              type="file"
+              accept=".csv"
+              onChange={(e) => setUploadFile(e.target.files[0])}
+              className="w-full rounded-lg border px-3 py-3 text-sm md:w-auto"
+            />
+
+            <button
+              onClick={handleUploadCsv}
+              className="w-full rounded-lg bg-blue-600 px-4 py-3 text-white shadow hover:bg-blue-700 md:w-auto"
+            >
+              Upload CSV
+            </button>
+          </div>
+
+          {uploadMessage && (
+            <p className="mt-3 rounded bg-gray-100 p-2 text-sm text-gray-700">
+              {uploadMessage}
+            </p>
+          )}
+        </div>
+
+        <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow sm:p-5">
+          <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-xl font-bold text-blue-900">
                 Search & Filters
@@ -149,15 +229,15 @@ function AssetList() {
 
             <button
               onClick={resetFilters}
-              className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900"
+              className="w-full rounded-lg bg-slate-800 px-4 py-3 text-white hover:bg-slate-900 md:w-auto"
             >
               Reset Filters
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
+              <label className="mb-1 block text-sm font-semibold text-gray-700">
                 Search
               </label>
               <input
@@ -165,12 +245,12 @@ function AssetList() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search name, type, IP..."
-                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
+              <label className="mb-1 block text-sm font-semibold text-gray-700">
                 Status
               </label>
               <select
@@ -179,7 +259,7 @@ function AssetList() {
                   setStatus(e.target.value);
                   setPage(0);
                 }}
-                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Status</option>
                 <option value="ACTIVE">ACTIVE</option>
@@ -189,7 +269,7 @@ function AssetList() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
+              <label className="mb-1 block text-sm font-semibold text-gray-700">
                 Start Date
               </label>
               <input
@@ -199,12 +279,12 @@ function AssetList() {
                   setStartDate(e.target.value);
                   setPage(0);
                 }}
-                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
+              <label className="mb-1 block text-sm font-semibold text-gray-700">
                 End Date
               </label>
               <input
@@ -214,33 +294,38 @@ function AssetList() {
                   setEndDate(e.target.value);
                   setPage(0);
                 }}
-                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-xl shadow p-8 text-center">
-            <p className="text-gray-500 font-semibold">Loading assets...</p>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {[1, 2].map((item) => (
+              <div
+                key={item}
+                className="h-72 animate-pulse rounded-2xl border bg-white shadow"
+              ></div>
+            ))}
           </div>
         ) : assets.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-2">
             {assets.map((asset) => (
               <div
                 key={asset.id}
-                className="bg-white rounded-2xl shadow p-6 border border-slate-200 hover:shadow-lg transition"
+                className="rounded-2xl border border-slate-200 bg-white p-4 shadow transition hover:shadow-lg sm:p-6"
               >
-                <div className="flex justify-between items-start gap-3 mb-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-blue-900">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0">
+                    <h2 className="break-words text-xl font-bold text-blue-900">
                       {asset.name}
                     </h2>
                     <p className="text-sm text-gray-500">Asset ID: {asset.id}</p>
                   </div>
 
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadge(
+                    className={`w-fit rounded-full border px-3 py-1 text-xs font-bold ${getStatusBadge(
                       asset.status
                     )}`}
                   >
@@ -248,19 +333,19 @@ function AssetList() {
                   </span>
                 </div>
 
-                <div className="space-y-2">
-                  <p className="text-gray-700">
+                <div className="space-y-2 text-sm sm:text-base">
+                  <p className="break-words text-gray-700">
                     <strong>Type:</strong> {asset.type}
                   </p>
 
-                  <p className="text-gray-700">
+                  <p className="break-words text-gray-700">
                     <strong>IP Address:</strong> {asset.ipAddress}
                   </p>
 
                   <p className="text-gray-700">
                     <strong>Risk Score:</strong>{" "}
                     <span
-                      className={`px-2 py-1 rounded font-bold ${getRiskBadge(
+                      className={`rounded px-2 py-1 font-bold ${getRiskBadge(
                         asset.riskScore ?? 0
                       )}`}
                     >
@@ -269,24 +354,35 @@ function AssetList() {
                   </p>
                 </div>
 
-                <div className="mt-5 flex flex-wrap gap-3">
+                <div className="mt-4 overflow-hidden">
+                  <AiPanel asset={asset} />
+                </div>
+
+                <div className="mt-5 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
                   <Link
                     to={`/assets/${asset.id}`}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    className="rounded-lg bg-blue-600 px-4 py-3 text-center text-white hover:bg-blue-700"
                   >
                     View
                   </Link>
 
                   <Link
                     to={`/edit/${asset.id}`}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                    className="rounded-lg bg-yellow-500 px-4 py-3 text-center text-white hover:bg-yellow-600"
                   >
                     Edit
                   </Link>
 
+                  <Link
+                    to="/analytics"
+                    className="rounded-lg bg-purple-600 px-4 py-3 text-center text-white hover:bg-purple-700"
+                  >
+                    Analytics
+                  </Link>
+
                   <button
                     onClick={() => deleteAsset(asset.id)}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                    className="rounded-lg bg-red-600 px-4 py-3 text-white hover:bg-red-700"
                   >
                     Delete
                   </button>
@@ -295,16 +391,16 @@ function AssetList() {
             ))}
           </div>
         ) : (
-          <div className="text-center p-10 bg-white rounded-xl shadow">
-            <p className="text-gray-500 font-semibold">No assets found</p>
+          <div className="rounded-xl bg-white p-10 text-center shadow">
+            <p className="font-semibold text-gray-500">No assets found</p>
           </div>
         )}
 
-        <div className="mt-8 flex justify-center items-center gap-4">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
           <button
             onClick={() => setPage(page - 1)}
             disabled={page === 0}
-            className="px-5 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 disabled:opacity-50"
+            className="w-full rounded-lg bg-gray-300 px-5 py-3 hover:bg-gray-400 disabled:opacity-50 sm:w-auto"
           >
             Prev
           </button>
@@ -316,7 +412,7 @@ function AssetList() {
           <button
             onClick={() => setPage(page + 1)}
             disabled={page + 1 >= totalPages}
-            className="px-5 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 disabled:opacity-50"
+            className="w-full rounded-lg bg-gray-300 px-5 py-3 hover:bg-gray-400 disabled:opacity-50 sm:w-auto"
           >
             Next
           </button>

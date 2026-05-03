@@ -1,16 +1,12 @@
-CREATE TABLE assets (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    type VARCHAR(100),
-    ip_address VARCHAR(50),
-    domain VARCHAR(255),
+CREATE TABLE IF NOT EXISTS asset (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    type VARCHAR(255),
+    ip_address VARCHAR(255),
     status VARCHAR(50),
-    risk_score INT,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    risk_score INTEGER
 );
 
-CREATE INDEX idx_assets_name ON assets(name);
-CREATE INDEX idx_assets_ip ON assets(ip_address);
-CREATE INDEX idx_assets_status ON assets(status);
+CREATE INDEX IF NOT EXISTS idx_asset_name ON asset(name);
+CREATE INDEX IF NOT EXISTS idx_asset_type ON asset(type);
+CREATE INDEX IF NOT EXISTS idx_asset_status ON asset(status);
