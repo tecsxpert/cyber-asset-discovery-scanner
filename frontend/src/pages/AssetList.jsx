@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import { Link } from "react-router-dom";
+import { SkeletonAssetList } from "../components/SkeletonLoader";
 
 function AssetList() {
   const [assets, setAssets] = useState([]);
@@ -108,10 +109,11 @@ function AssetList() {
 
   return (
     <div className="min-h-screen bg-slate-100">
-      <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-700 text-white px-6 py-8 shadow">
+      <div className="bg-gradient-to-r from-primary to-blue-900 text-white px-6 py-8 shadow"
+        style={{ backgroundColor: '#1B4F8A' }}>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Asset List</h1>
+            <h1 className="text-3xl font-bold font-sans">Asset List</h1>
             <p className="text-blue-100 mt-1">
               Search, filter and manage discovered cyber assets
             </p>
@@ -120,14 +122,14 @@ function AssetList() {
           <div className="flex flex-wrap gap-3">
             <Link
               to="/dashboard"
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 shadow"
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 shadow min-h-touch"
             >
               Dashboard
             </Link>
 
             <Link
               to="/add"
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 shadow"
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 min-h-touch"
             >
               + Add Asset
             </Link>
@@ -135,11 +137,11 @@ function AssetList() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-[8px]">
         <div className="bg-white rounded-2xl shadow p-5 mb-6 border border-slate-200">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
             <div>
-              <h2 className="text-xl font-bold text-blue-900">
+              <h2 className="text-xl font-bold text-primary" style={{ color: '#1B4F8A' }}>
                 Search & Filters
               </h2>
               <p className="text-sm text-gray-500">
@@ -149,13 +151,13 @@ function AssetList() {
 
             <button
               onClick={resetFilters}
-              className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900"
+              className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900 min-h-touch"
             >
               Reset Filters
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-[8px]">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">
                 Search
@@ -165,7 +167,7 @@ function AssetList() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search name, type, IP..."
-                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 min-h-touch"
               />
             </div>
 
@@ -179,7 +181,7 @@ function AssetList() {
                   setStatus(e.target.value);
                   setPage(0);
                 }}
-                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 min-h-touch"
               >
                 <option value="">All Status</option>
                 <option value="ACTIVE">ACTIVE</option>
@@ -199,7 +201,7 @@ function AssetList() {
                   setStartDate(e.target.value);
                   setPage(0);
                 }}
-                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 min-h-touch"
               />
             </div>
 
@@ -214,15 +216,15 @@ function AssetList() {
                   setEndDate(e.target.value);
                   setPage(0);
                 }}
-                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-slate-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 min-h-touch"
               />
             </div>
           </div>
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-xl shadow p-8 text-center">
-            <p className="text-gray-500 font-semibold">Loading assets...</p>
+          <div className="bg-white rounded-xl shadow p-8">
+            <SkeletonAssetList />
           </div>
         ) : assets.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -269,24 +271,24 @@ function AssetList() {
                   </p>
                 </div>
 
-                <div className="mt-5 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-wrap gap-[8px]">
                   <Link
                     to={`/assets/${asset.id}`}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 min-h-touch"
                   >
                     View
                   </Link>
 
                   <Link
                     to={`/edit/${asset.id}`}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 min-h-touch"
                   >
                     Edit
                   </Link>
 
                   <button
                     onClick={() => deleteAsset(asset.id)}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 min-h-touch"
                   >
                     Delete
                   </button>
@@ -295,8 +297,22 @@ function AssetList() {
             ))}
           </div>
         ) : (
-          <div className="text-center p-10 bg-white rounded-xl shadow">
-            <p className="text-gray-500 font-semibold">No assets found</p>
+          <div className="text-center p-10 bg-white rounded-xl shadow border border-slate-200">
+            <div className="mb-4">
+              <p className="text-6xl mb-3">📦</p>
+              <p className="text-gray-700 font-semibold text-lg mb-2">No assets found</p>
+              <p className="text-gray-500 text-sm">
+                {debouncedSearch || status || startDate || endDate
+                  ? "Try adjusting your filters"
+                  : "Create your first asset to get started"}
+              </p>
+            </div>
+            <Link
+              to="/add"
+              className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 inline-block mt-4"
+            >
+              + Add First Asset
+            </Link>
           </div>
         )}
 
@@ -304,7 +320,7 @@ function AssetList() {
           <button
             onClick={() => setPage(page - 1)}
             disabled={page === 0}
-            className="px-5 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 disabled:opacity-50"
+            className="px-5 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 disabled:opacity-50 min-h-touch"
           >
             Prev
           </button>
@@ -316,7 +332,7 @@ function AssetList() {
           <button
             onClick={() => setPage(page + 1)}
             disabled={page + 1 >= totalPages}
-            className="px-5 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 disabled:opacity-50"
+            className="px-5 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 disabled:opacity-50 min-h-touch"
           >
             Next
           </button>
