@@ -2,15 +2,17 @@ package com.internship.tool.exception;
 
 import com.internship.tool.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,9 +20,12 @@ import java.util.Map;
 /**
  * Global exception handler providing consistent JSON error responses
  * for all API errors (404, 400, 500, 403, 405, etc.).
+ * Uses @RestControllerAdvice so @ResponseBody is implicit on every handler.
  */
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     // ─── 404 Not Found ────────────────────────────────────────────────────────
 
@@ -102,8 +107,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, HttpServletRequest request) {
+        logger.error("Unhandled exception on {} {}: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                "An unexpected error occurred: " + ex.getMessage(), request);
+                "An unexpected error occurred. Please contact support.", request);
     }
 
     // ─── Helper ───────────────────────────────────────────────────────────────
