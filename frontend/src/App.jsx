@@ -12,6 +12,7 @@ import AssetDetail from "./pages/AssetDetail";
 import Analytics from "./pages/Analytics";
 
 import { AuthProvider } from "./context/AuthContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function ProtectedPage({ children }) {
   return (

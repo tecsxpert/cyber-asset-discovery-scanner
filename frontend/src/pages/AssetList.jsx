@@ -219,7 +219,7 @@ function AssetList() {
         <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow sm:p-5">
           <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-xl font-bold text-blue-900">
+              <h2 className="text-xl font-bold text-primary" style={{ color: '#1B4F8A' }}>
                 Search & Filters
               </h2>
               <p className="text-sm text-gray-500">
