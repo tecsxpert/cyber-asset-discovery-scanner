@@ -1,4 +1,4 @@
-package com.internship.tool.aspect;
+package com.internship.tool.Aspect;
 
 import com.internship.tool.model.AuditLog;
 import com.internship.tool.repository.AuditLogRepository;

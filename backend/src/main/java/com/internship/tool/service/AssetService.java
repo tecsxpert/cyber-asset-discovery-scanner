@@ -7,18 +7,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AssetService {
 
     @Autowired
     private AssetRepository assetRepository;
 
+    // Day 11: uses pageable sorting from controller
     public Page<Asset> getAllAssets(Pageable pageable) {
         return assetRepository.findAll(pageable);
     }
 
     public Iterable<Asset> getAssets() {
         return assetRepository.findAll();
+    }
+
+    public Optional<Asset> getAssetByIdOptional(Long id) {
+        return assetRepository.findById(id);
     }
 
     public Asset getAssetById(Long id) {
@@ -59,6 +66,7 @@ public class AssetService {
         return assetRepository.countByRiskScoreGreaterThanEqual(70);
     }
 
+  
     public Page<Asset> searchAssets(
             String q,
             String status,

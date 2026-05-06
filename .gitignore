@@ -1,9 +1,25 @@
 .env
+.env.*
+!.env.example
+
 target/
-node_modules/
+node_modules
 __pycache__/
 chroma_data/
 *.class
 *.jar
+*.log
 
+dist/
+build/
+
+__pycache__/
+*.pyc
+
+.idea/
+.vscode/
+.DS_Store
+
+chroma_data/
+logs/
 *.log
