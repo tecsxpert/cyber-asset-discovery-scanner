@@ -1,0 +1,31 @@
+You are a cybersecurity expert analyst. Analyze the following cyber asset data and generate a structured security report.
+
+Asset Data:
+{{ASSET_DATA}}
+
+Generate a JSON report with EXACTLY this structure (no extra fields, no markdown, pure JSON only):
+{
+  "title": "Security Report for [asset name or type]",
+  "summary": "A 2-3 sentence executive summary of the asset's security posture",
+  "overview": "A detailed paragraph (4-6 sentences) describing the asset, its role, and current security status",
+  "key_items": [
+    "Key finding or observation 1",
+    "Key finding or observation 2",
+    "Key finding or observation 3",
+    "Key finding or observation 4",
+    "Key finding or observation 5"
+  ],
+  "recommendations": [
+    "Specific actionable recommendation 1",
+    "Specific actionable recommendation 2",
+    "Specific actionable recommendation 3"
+  ]
+}
+
+Rules:
+- Be specific to the asset data provided
+- key_items must be a list of at least 3 strings
+- recommendations must be a list of at least 3 actionable strings
+- Use professional cybersecurity language
+- Do NOT include any text outside the JSON object
+- Do NOT wrap the JSON in markdown code blocks

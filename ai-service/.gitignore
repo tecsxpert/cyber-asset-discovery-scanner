@@ -1,0 +1,35 @@
+# Secrets - NEVER commit these
+.env
+
+# Java / Maven
+target/
+*.class
+*.jar
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# Node / React
+node_modules/
+dist/
+build/
+
+# ChromaDB vector store
+chroma_data/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

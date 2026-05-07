@@ -1,0 +1,32 @@
+You are a cybersecurity expert. Based on the following cyber asset data, provide exactly 3 security recommendations.
+
+Asset Data:
+{{ASSET_DATA}}
+
+Respond with EXACTLY this JSON structure (no markdown, no extra text, pure JSON only):
+{
+  "recommendations": [
+    {
+      "action_type": "PATCH | CONFIG | MONITOR | ISOLATE | SCAN",
+      "description": "Clear, actionable recommendation in 1-2 sentences.",
+      "priority": "HIGH | MEDIUM | LOW"
+    },
+    {
+      "action_type": "PATCH | CONFIG | MONITOR | ISOLATE | SCAN",
+      "description": "Clear, actionable recommendation in 1-2 sentences.",
+      "priority": "HIGH | MEDIUM | LOW"
+    },
+    {
+      "action_type": "PATCH | CONFIG | MONITOR | ISOLATE | SCAN",
+      "description": "Clear, actionable recommendation in 1-2 sentences.",
+      "priority": "HIGH | MEDIUM | LOW"
+    }
+  ]
+}
+
+Rules:
+- Always return exactly 3 recommendations
+- Each must have action_type, description, and priority
+- Be specific to the asset data
+- Do NOT include any text outside the JSON
+- Do NOT use markdown code blocks
