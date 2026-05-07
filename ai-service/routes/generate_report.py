@@ -1,31 +1,3 @@
-<<<<<<< HEAD
-from flask import Blueprint, request, jsonify
-import os
-import json
-
-describe_bp = Blueprint('describe', __name__)
-
-@describe_bp.route('/describe', methods=['POST'])
-def describe_asset():
-    """Describe a cyber asset using AI"""
-    try:
-        data = request.get_json()
-        if not data or 'asset_data' not in data:
-            return jsonify({'error': 'asset_data is required'}), 400
-
-        asset_data = data['asset_data']
-
-        # Mock AI response for now - in real implementation, this would call an AI service
-        description = f"This is a {asset_data.get('type', 'unknown')} asset named {asset_data.get('name', 'unnamed')}."
-
-        return jsonify({
-            'description': description,
-            'asset_id': asset_data.get('id')
-        })
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-=======
 import json
 import logging
 import os
@@ -35,21 +7,21 @@ from flask import Blueprint, jsonify
 from services.groq_client import call_groq
 from services.security_middleware import secure_input, get_sanitized_data
 
-describe_bp = Blueprint("describe", __name__)
+generate_report_bp = Blueprint("generate_report", __name__)
 logger = logging.getLogger(__name__)
 
 FALLBACK_RESPONSE = {
-    "asset_name": "Unknown",
-    "asset_type": "Unknown",
-    "description": "AI service is temporarily unavailable. Please try again later.",
-    "risk_level": "UNKNOWN",
-    "risk_reason": "Could not assess — AI service unavailable.",
+    "title": "Security Report (Fallback)",
+    "summary": "AI service is temporarily unavailable. Please try again later.",
+    "overview": "Unable to generate a full AI report at this time.",
+    "key_items": ["Manual review recommended."],
+    "recommendations": ["Retry the report generation in a few minutes."],
     "generated_at": None,
     "is_fallback": True
 }
 
 PROMPT_TEMPLATE_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "prompts", "describe_prompt.txt"
+    os.path.dirname(__file__), "..", "prompts", "generate_report_prompt.txt"
 )
 
 
@@ -58,10 +30,11 @@ def load_prompt_template() -> str:
         return f.read()
 
 
-@describe_bp.route("/describe", methods=["POST"])
+@generate_report_bp.route("/generate-report", methods=["POST"])
 @secure_input
-def describe():
+def generate_report():
     data = get_sanitized_data()
+
     if not data or "asset_data" not in data:
         return jsonify({"error": "Missing 'asset_data' in request body"}), 400
 
@@ -86,22 +59,26 @@ def describe():
                 cleaned = cleaned[4:]
         cleaned = cleaned.strip()
 
-        result = json.loads(cleaned)
-        result["generated_at"] = datetime.now(timezone.utc).isoformat()
-        result["is_fallback"] = False
+        report = json.loads(cleaned)
 
-        logger.info("Describe endpoint responded successfully.")
-        return jsonify(result), 200
+        for field in ["title", "summary", "overview", "key_items", "recommendations"]:
+            if field not in report:
+                report[field] = "Not available"
+
+        report["generated_at"] = datetime.now(timezone.utc).isoformat()
+        report["is_fallback"] = False
+
+        logger.info("Report generated successfully.")
+        return jsonify(report), 200
 
     except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse Groq JSON in /describe: {e}")
+        logger.error(f"Failed to parse Groq JSON response: {e}")
         fallback = FALLBACK_RESPONSE.copy()
         fallback["generated_at"] = datetime.now(timezone.utc).isoformat()
         return jsonify(fallback), 200
 
     except Exception as e:
-        logger.error(f"Error in /describe: {e}")
+        logger.error(f"Error in /generate-report: {e}")
         fallback = FALLBACK_RESPONSE.copy()
         fallback["generated_at"] = datetime.now(timezone.utc).isoformat()
         return jsonify(fallback), 200
->>>>>>> bdc09c7 (Integrated ai-service)

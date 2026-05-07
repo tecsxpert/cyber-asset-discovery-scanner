@@ -1,0 +1,19 @@
+You are a cybersecurity expert. Analyze the following cyber asset and provide a concise description.
+
+Asset Data:
+{{ASSET_DATA}}
+
+Respond with EXACTLY this JSON structure (no markdown, no extra text, pure JSON only):
+{
+  "asset_name": "name of the asset",
+  "asset_type": "type of asset (Server / Firewall / Router / etc.)",
+  "description": "A 3-4 sentence professional description of this asset, its role in the network, and its current security posture.",
+  "risk_level": "LOW | MEDIUM | HIGH | CRITICAL",
+  "risk_reason": "One sentence explaining the risk level.",
+  "generated_at": "will be filled by system"
+}
+
+Rules:
+- Be specific to the data provided
+- Do NOT include any text outside the JSON
+- Do NOT use markdown code blocks

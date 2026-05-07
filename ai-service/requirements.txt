@@ -1,5 +1,14 @@
+<<<<<<< HEAD
 flask==3.0.0
 flask-limiter==3.5.0
 groq==0.4.2
 python-dotenv==1.0.0
 requests==2.31.0
+=======
+flask==3.0.3
+flask-limiter==3.7.0
+requests==2.32.3
+python-dotenv==1.0.1
+pytest==8.2.2
+pytest-mock==3.14.0
+>>>>>>> bdc09c7 (Integrated ai-service)
